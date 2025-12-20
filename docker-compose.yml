@@ -1,0 +1,35 @@
+services:
+  server:
+    image: itzg/minecraft-server:latest
+    pull_policy: daily
+    tty: true
+    stdin_open: true
+    ports:
+      - "25565:25565"
+      - "25575:25575"
+    environment:
+      EULA: "TRUE"
+      MAX_MEMORY: "4G"
+      INIT_MEMORY: "2G"
+      VERSION: "1.21.11"
+      JVM_OPTS: "-XX:+UseContainerSupport -Dlog4j.configurationFile=/log4j_conf/log4j_bridge.xml"
+    volumes:
+      - ./mcs-data:/data
+      - log4j_conf:/log4j_conf
+  
+  mcs-bot:
+    build:
+      context: ./bot
+      dockerfile: Dockerfile
+    tty: true
+    stdin_open: true
+    environment:
+      DISCORD_BOT_TOKEN: "${DISCORD_BOT_TOKEN}"
+      DISCORD_CHANNEL_ID: "${DISCORD_CHANNEL_ID}"
+    depends_on:
+      - server
+    volumes:
+      - log4j_conf:/log4j_conf
+
+volumes:
+  log4j_conf:

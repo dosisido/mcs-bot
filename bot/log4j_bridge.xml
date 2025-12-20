@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Terminal" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
+        </Console>
+
+        <RollingFile name="LogFile" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+        </RollingFile>
+
+        <Socket name="PythonSocket" host="mcs-bot" port="9999" reconnectionDelayMillis="500">
+            <PatternLayout pattern="%d{HH:mm:ss} [%t/%level]: %msg%n" />
+        </Socket>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Terminal" />
+            <AppenderRef ref="LogFile" />
+            <AppenderRef ref="PythonSocket" />
+        </Root>
+    </Loggers>
+</Configuration>

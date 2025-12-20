@@ -1,0 +1,34 @@
+name: Build and Publich image to Docker Hub
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  publish_image:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build bot --file bot/Dockerfile --tag dosisido/msc-bot:latest
+    - name: Push image to Docker Hub
+      run: |
+        docker login -u dosisido -p ${{ secrets.DOCKERHUB_TOKEN }}
+        docker push dosisido/msc-bot:latest
+    - name: Publish README to DockerHub
+      run: |
+        TOKEN=$(curl -s -H "Content-Type: application/json" \
+          -X POST \
+          -d '{"username": "'"${{ secrets.DOCKERHUB_USERNAME }}"'", "password": "'"${{ secrets.DOCKERHUB_PASSWORD }}"'"}' \
+          https://hub.docker.com/v2/users/login/ | jq -r .token)
+
+        README_CONTENT=$(sed 's/"/\\"/g' README.md | sed ':a;N;$!ba;s/\n/\\n/g')
+
+        curl -s -X PATCH \
+          -H "Content-Type: application/json" \
+          -H "Authorization: JWT $TOKEN" \
+          -d "{\"full_description\": \"$README_CONTENT\"}" \
+          https://hub.docker.com/v2/repositories/dosisido/msc-bot/
