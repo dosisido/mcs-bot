@@ -13,11 +13,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker build bot --file bot/Dockerfile --tag dosisido/msc-bot:latest
+      run: docker build bot --file bot/Dockerfile --tag dosisido/mcs-bot:latest
     - name: Push image to Docker Hub
       run: |
         docker login -u dosisido -p ${{ secrets.DOCKERHUB_TOKEN }}
-        docker push dosisido/msc-bot:latest
+        docker push dosisido/mcs-bot:latest
     - name: Publish README to DockerHub
       run: |
         TOKEN=$(curl -s -H "Content-Type: application/json" \
@@ -31,4 +31,4 @@ jobs:
           -H "Content-Type: application/json" \
           -H "Authorization: JWT $TOKEN" \
           -d "{\"full_description\": \"$README_CONTENT\"}" \
-          https://hub.docker.com/v2/repositories/dosisido/msc-bot/
+          https://hub.docker.com/v2/repositories/dosisido/mcs-bot/

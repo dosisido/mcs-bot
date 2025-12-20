@@ -11,7 +11,7 @@ It requires two environment variables:
 - DISCORD_BOT_TOKEN: self-explanatory
 - DISCORD_CHANNEL_ID: the ID of the channel where the bot will send messages. To get this, enable Developer Mode in your account settings, then right-click the channel and copy its ID from the bottom.
 
-The Minecraft server **must** have access to the `/log4j_conf` folder inside the container, which contains the `log4j_bridge.xml` configuration file. The server must also be started with the following command-line argument: 
+The container inside the compose **must** be called `mcs-bot` and the Minecraft server must have access to the `/log4j_conf` folder inside this container, which contains the `log4j_bridge.xml` configuration file. The server must also be started with the following command-line argument: 
 `-Dlog4j.configurationFile=/log4j_conf/log4j_bridge.xml`
 
 This is a sample docker compose:
@@ -29,7 +29,7 @@ services:
       - log4j_conf:/log4j_conf
   
   mcs-bot:
-    image: dosisido/msc-bot
+    image: dosisido/mcs-bot
     environment:
       DISCORD_BOT_TOKEN: "${DISCORD_BOT_TOKEN}"
       DISCORD_CHANNEL_ID: "${DISCORD_CHANNEL_ID}"
@@ -45,4 +45,4 @@ volumes:
 ## Contributing
 Issues and pull requests are welcome. If something does not work as expected, open an issue on github describing the desired behavior.
 
-[Github Repository](https://github.com/dosisido/msc-bot)
+[Github Repository](https://github.com/dosisido/mcs-bot)
