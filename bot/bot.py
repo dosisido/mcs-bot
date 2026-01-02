@@ -386,12 +386,7 @@ class MinecraftBot:
             return False
         if member.guild.id != self.__guild_id:
             return False
-        role = member.guild.get_role(self.__verified_role_id)
-        if role and role in member.roles:
-            return False
-        if str(member.id) in self._mappings:
-            return False
-        return True
+        return str(member.id) not in self._mappings
 
     async def _bootstrap_existing_members(self) -> None:
         guild = await self.__get_guild()
@@ -404,6 +399,12 @@ class MinecraftBot:
     async def _ensure_verification(self, member: discord.Member, welcome: bool) -> None:
         if not self._member_needs_verification(member):
             return
+        role = member.guild.get_role(self.__verified_role_id)
+        if role and role in member.roles:
+            try:
+                await member.remove_roles(role, reason="Minecraft whitelist mapping missing")
+            except discord.HTTPException as exc:
+                print(f"Error removing role from {member.id}: {exc}")
         if member.id in self._sessions_by_member:
             return
 
