@@ -1,4 +1,5 @@
 __pycache__
 .venv/
 mcs-data/
+bot-data/
 .env

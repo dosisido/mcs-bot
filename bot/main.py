@@ -9,6 +9,13 @@ from listener import start_subscriber
 
 TOKEN = os.getenv('DISCORD_BOT_TOKEN') or ''
 CHANNEL_ID = os.getenv('DISCORD_CHANNEL_ID') or ''
+GUILD_ID = os.getenv('DISCORD_GUILD_ID') or ''
+VERIFIED_ROLE_ID = os.getenv('DISCORD_VERIFIED_ROLE_ID') or ''
+COMMAND_CHANNEL_ID = os.getenv('DISCORD_COMMAND_CHANNEL_ID') or ''
+RCON_HOST = os.getenv('RCON_HOST') or ''
+RCON_PORT = os.getenv('RCON_PORT') or ''
+RCON_PASSWORD = os.getenv('RCON_PASSWORD') or ''
+WHITELIST_STORE_PATH = os.getenv('WHITELIST_STORE_PATH') or '/data/discord_mappings.json'
 HOST = '0.0.0.0'
 PORT = 9999
 
@@ -69,7 +76,32 @@ def process_line(minecraft_bot: MinecraftBot) -> Callable[[str], Awaitable[None]
 
 
 async def main():
-    minecraft_bot = MinecraftBot(TOKEN, CHANNEL_ID)
+    required_env = {
+        'DISCORD_BOT_TOKEN': TOKEN,
+        'DISCORD_CHANNEL_ID': CHANNEL_ID,
+        'DISCORD_GUILD_ID': GUILD_ID,
+        'DISCORD_VERIFIED_ROLE_ID': VERIFIED_ROLE_ID,
+        'DISCORD_COMMAND_CHANNEL_ID': COMMAND_CHANNEL_ID,
+        'RCON_HOST': RCON_HOST,
+        'RCON_PORT': RCON_PORT,
+        'RCON_PASSWORD': RCON_PASSWORD,
+    }
+
+    missing = [name for name, value in required_env.items() if not value]
+    if missing:
+        raise RuntimeError(f"Missing required environment variables: {', '.join(missing)}")
+
+    minecraft_bot = MinecraftBot(
+        TOKEN,
+        CHANNEL_ID,
+        GUILD_ID,
+        VERIFIED_ROLE_ID,
+        COMMAND_CHANNEL_ID,
+        RCON_HOST,
+        RCON_PORT,
+        RCON_PASSWORD,
+        WHITELIST_STORE_PATH,
+    )
 
     bot = minecraft_bot.start()
 

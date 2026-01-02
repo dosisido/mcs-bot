@@ -13,6 +13,9 @@ services:
       INIT_MEMORY: "2G"
       VERSION: "1.21.11"
       JVM_OPTS: "-XX:+UseContainerSupport -Dlog4j.configurationFile=/log4j_conf/log4j_bridge.xml"
+      RCON_PASSWORD: "${RCON_PASSWORD}"
+      ENABLE_RCON: "true"
+      GAMEMODE: "creative"
     volumes:
       - ./mcs-data:/data
       - log4j_conf:/log4j_conf
@@ -23,13 +26,12 @@ services:
       dockerfile: Dockerfile
     tty: true
     stdin_open: true
-    environment:
-      DISCORD_BOT_TOKEN: "${DISCORD_BOT_TOKEN}"
-      DISCORD_CHANNEL_ID: "${DISCORD_CHANNEL_ID}"
-    depends_on:
-      - server
+    restart: unless-stopped
+    env_file:
+      - .env
     volumes:
       - log4j_conf:/log4j_conf
+      - ./bot-data:/data
 
 volumes:
   log4j_conf:
