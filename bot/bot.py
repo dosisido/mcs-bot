@@ -40,7 +40,7 @@ class MinecraftBot:
         whitelist_store_path: str,
     ):
         self.__token = token
-        self.__channel_id = int(channel_id)
+        self.__bridge_channel_id = int(channel_id)
         self.__guild_id = int(guild_id)
         self.__verified_role_id = int(verified_role_id)
         self.__command_channel_id = int(command_channel_id)
@@ -119,9 +119,9 @@ class MinecraftBot:
     @asynccontextmanager
     async def __get_channel(self) -> AsyncIterator[Optional[discord.TextChannel]]:
         await self._client.wait_until_ready()
-        channel = self._client.get_channel(self.__channel_id)
+        channel = self._client.get_channel(self.__bridge_channel_id)
         if not isinstance(channel, discord.TextChannel):
-            print(f"Error: Channel {self.__channel_id} not found or is not a TextChannel.")
+            print(f"Error: Channel {self.__bridge_channel_id} not found or is not a TextChannel.")
             yield None
             return
         yield channel
@@ -169,6 +169,9 @@ class MinecraftBot:
             return
         if message.channel.id == self.__command_channel_id:
             await self._handle_command_channel_message(message)
+            return
+        if message.channel.id == self.__bridge_channel_id:
+            await self._handle_bridge_in_message(message)
             return
         session = self._sessions_by_channel.get(message.channel.id)
         if not session:
@@ -515,6 +518,21 @@ class MinecraftBot:
             await message.reply(formatted, mention_author=False)
         except discord.HTTPException as exc:
             print(f"Error sending RCON response: {exc}")
+
+    async def _handle_bridge_in_message(self, ds_message: discord.Message) -> None:
+        message = ds_message.content.strip()
+        discord_user = ds_message.author.id
+        if not message or not discord_user: return
+        print(f"Received message in bridge channel from user {discord_user}: {message}")
+
+        players = self._load_mappings()
+        game_name = [v["minecraft_name"] for k, v in players.items() if v["discord_id"] == discord_user]
+        if game_name and len(game_name) == 1:
+            prefix = f"<{game_name[0]}>"
+            await self._run_rcon_command(f'tellraw @a {{"text":"{prefix} {message}"}}')
+        else:
+            print(f"No Minecraft mapping found for Discord user {discord_user}, message not sent to Minecraft.")
+
 
     async def _run_rcon_command(self, command: str) -> str:
         async with self._rcon_lock:

@@ -20,7 +20,7 @@ This project was created to add some custom features for a two-week Minecraft ph
 
 ## Environment variables
 - `DISCORD_BOT_TOKEN` (required): Discord bot token.
-- `DISCORD_CHANNEL_ID` (required): Channel ID for Minecraft log relay.
+- `DISCORD_BRIDGE_CHANNEL_ID` (required): Channel ID for Minecraft log relay.
 - `DISCORD_GUILD_ID` (required): Guild where verification and role management happen.
 - `DISCORD_VERIFIED_ROLE_ID` (required): Role granted after successful whitelist verification.
 - `DISCORD_COMMAND_CHANNEL_ID` (required): Channel whose messages are executed as RCON commands.
@@ -50,7 +50,7 @@ services:
     image: dosisido/mcs-bot
     environment:
       DISCORD_BOT_TOKEN: "${DISCORD_BOT_TOKEN}"
-      DISCORD_CHANNEL_ID: "${DISCORD_CHANNEL_ID}"
+      DISCORD_BRIDGE_CHANNEL_ID: "${DISCORD_BRIDGE_CHANNEL_ID}"
       DISCORD_GUILD_ID: "${DISCORD_GUILD_ID}"
       DISCORD_VERIFIED_ROLE_ID: "${DISCORD_VERIFIED_ROLE_ID}"
       DISCORD_COMMAND_CHANNEL_ID: "${DISCORD_COMMAND_CHANNEL_ID}"

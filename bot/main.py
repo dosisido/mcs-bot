@@ -8,7 +8,7 @@ from bot import MinecraftBot
 from listener import start_subscriber
 
 TOKEN = os.getenv('DISCORD_BOT_TOKEN') or ''
-CHANNEL_ID = os.getenv('DISCORD_CHANNEL_ID') or ''
+BRIDGE_CHANNEL_ID = os.getenv('DISCORD_BRIDGE_CHANNEL_ID') or ''
 GUILD_ID = os.getenv('DISCORD_GUILD_ID') or ''
 VERIFIED_ROLE_ID = os.getenv('DISCORD_VERIFIED_ROLE_ID') or ''
 COMMAND_CHANNEL_ID = os.getenv('DISCORD_COMMAND_CHANNEL_ID') or ''
@@ -78,7 +78,7 @@ def process_line(minecraft_bot: MinecraftBot) -> Callable[[str], Awaitable[None]
 async def main():
     required_env = {
         'DISCORD_BOT_TOKEN': TOKEN,
-        'DISCORD_CHANNEL_ID': CHANNEL_ID,
+        'DISCORD_BRIDGE_CHANNEL_ID': BRIDGE_CHANNEL_ID,
         'DISCORD_GUILD_ID': GUILD_ID,
         'DISCORD_VERIFIED_ROLE_ID': VERIFIED_ROLE_ID,
         'DISCORD_COMMAND_CHANNEL_ID': COMMAND_CHANNEL_ID,
@@ -93,7 +93,7 @@ async def main():
 
     minecraft_bot = MinecraftBot(
         TOKEN,
-        CHANNEL_ID,
+        BRIDGE_CHANNEL_ID,
         GUILD_ID,
         VERIFIED_ROLE_ID,
         COMMAND_CHANNEL_ID,
